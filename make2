@@ -1,0 +1,38 @@
+CXX = g++
+CXXFLAGS = -Wall -g -std=c++17 -Iproj1/include
+LDFLAGS = -lgtest -lgtest_main -pthread
+
+BIN_DIR = bin
+OBJ_DIR = obj
+
+# Source files
+SRCS = proj1/src/StringUtils.cpp proj1/src/StringUtilsTest.cpp
+
+# Object files (placed in obj/)
+OBJS = $(addprefix $(OBJ_DIR)/, $(notdir $(SRCS:.cpp=.o)))
+
+# Target executable
+TARGET = $(BIN_DIR)/teststrutils
+
+# Default target
+all: create_dir $(TARGET)
+
+# Link object files into the final binary
+$(TARGET): $(OBJS)
+	$(CXX) $(CXXFLAGS) -o $@ $(OBJS) $(LDFLAGS)
+
+# Compile source files into object files (rule for obj/)
+$(OBJ_DIR)/%.o: proj1/src/%.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+# Create necessary directories
+create_dir:
+	mkdir -p $(OBJ_DIR) $(BIN_DIR)
+
+# Clean generated files
+clean:
+	rm -rf $(TARGET) $(OBJS) $(OBJ_DIR) $(BIN_DIR)
+
+# Run the program
+run: $(TARGET)
+	./$(TARGET)

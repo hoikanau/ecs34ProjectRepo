@@ -1,0 +1,38 @@
+CXX = g++
+CXXFLAGS = -std=c++17 -Wall -Iinclude -I/usr/include/gtest
+LDFLAGS = -lgtest -lgtest_main -pthread
+
+# Directories
+SRCDIR = src
+TESTSRCDIR = testsrc
+OBJDIR = obj
+BINDIR = bin
+
+# Files
+TARGET = teststrutils
+SRCS = $(SRCDIR)/StringUtils.cpp $(TESTSRCDIR)/StringUtilsTest.cpp
+OBJS = $(OBJDIR)/StringUtils.o $(OBJDIR)/StringUtilsTest.o
+EXEC = $(BINDIR)/$(TARGET)
+
+# Rules
+all: directories $(EXEC)
+
+$(EXEC): $(OBJS)
+	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
+
+# Generic pattern for compiling .cpp files
+$(OBJDIR)/%.o: $(SRCDIR)/%.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+$(OBJDIR)/%.o: $(TESTSRCDIR)/%.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+run: all
+	./$(EXEC)
+
+clean:
+	rm -rf $(OBJDIR) $(BINDIR)
+
+# Create directories
+directories:
+	mkdir -p $(OBJDIR) $(BINDIR)
