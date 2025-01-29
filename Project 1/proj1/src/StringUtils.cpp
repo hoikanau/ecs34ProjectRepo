@@ -1,4 +1,4 @@
-#include "../include/StringUtils.h"
+#include "StringUtils.h"
 #include <iostream>
 using namespace std;
 
@@ -11,9 +11,10 @@ std::string Slice(const std::string &str, ssize_t start, ssize_t end) noexcept{
 
 std::string Capitalize(const std::string &str) noexcept{
     string resultString = str;
-    for(int i = 0; i < resultString.length(); i++){
-        resultString.at(i) = toupper(str.at(i));
+    for (int i = 0; i < resultString.length(); i++){
+        resultString.at(i) = tolower(resultString.at(i));
     }
+    resultString.at(0) = toupper(resultString.at(0));
     return resultString;
 }
 

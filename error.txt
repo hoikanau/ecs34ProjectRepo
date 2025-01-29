@@ -1,0 +1,2 @@
+b'StringUtils.cpp:5:10: fatal error: ../include/StringUtils.h: No such file or directory\n    5 | #include "../include/StringUtils.h"\n      |          ^~~~~~~~~~~~~~~~~~~~~~~~~~\ncompilation terminated.'
+Test Failed: b'StringUtils.cpp:5:10: fatal error: ../inc[156 chars]ted.' != b''

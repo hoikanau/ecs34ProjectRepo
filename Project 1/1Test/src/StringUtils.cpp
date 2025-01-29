@@ -1,19 +1,27 @@
 #include "../include/StringUtils.h"
 #include <iostream>
+#include <sstream>
+
 using namespace std;
 
 namespace StringUtils{
 
 std::string Slice(const std::string &str, ssize_t start, ssize_t end) noexcept{
-    // Replace code here
-    return "";
+    string inputString = str;
+    stringstream resultString;
+    for (int i = start; i < end; i++){
+        resultString << inputString.at(i);
+    }
+    string finalString = resultString.str();
+    return finalString;
 }
 
 std::string Capitalize(const std::string &str) noexcept{
     string resultString = str;
-    for(int i = 0; i < resultString.length(); i++){
-        resultString.at(i) = toupper(str.at(i));
+    for (int i = 0; i < resultString.length(); i++){
+        resultString.at(i) = tolower(resultString.at(i));
     }
+    resultString.at(0) = toupper(resultString.at(0));
     return resultString;
 }
 
