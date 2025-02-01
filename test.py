@@ -11,3 +11,6 @@ print(testString[mySlice])
 
 mySlice = slice(len(testString)*-1,7)
 print(testString[mySlice])
+print(t.upper())
+
+
