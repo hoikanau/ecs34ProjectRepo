@@ -1,37 +1,36 @@
-# Compiler Settings
+# I am compling usig g++
+#  Making sure c++17
+#  Inlcuding the files that my makefile needs to access
 CXX = g++
 CXXFLAGS = -std=c++17 -Wall -Iinclude -I/usr/include/gtest
 LDFLAGS = -lgtest -lgtest_main -pthread
-
-# Directories to create on when make 
-SRCDIR = src
-TESTSRCDIR = testsrc
-OBJDIR = obj
-BINDIR = bin
-
-# Files for linking
+# Directories
+SRCDIRECT = src
+TESTDIRECT = testsrc
+OBJDIRECT = obj
+BINDIRECT = bin
+# CReating file teststrutils and linking it with the cpp and cpptest file
 TARGET = teststrutils
-SRCS = $(SRCDIR)/StringUtils.cpp $(TESTSRCDIR)/StringUtilsTest.cpp
-OBJS = $(OBJDIR)/StringUtils.o $(OBJDIR)/StringUtilsTest.o
-EXEC = $(BINDIR)/$(TARGET)
+SRCS = $(SRCDIRETC)/StringUtils.cpp $(TESTDIRECT)/StringUtilsTest.cpp
+OBJS = $(OBJDIRECT)/StringUtils.o $(OBJDIRECT)/StringUtilsTest.o
+EXEC = $(BINDIRECT)/$(TARGET)
+
 
 all: directories $(EXEC)
-
 $(EXEC): $(OBJS)
 	$(CXX) $(CXXFLAGS) $^ -o $@ $(LDFLAGS)
-
-$(OBJDIR)/%.o: $(SRCDIR)/%.cpp
+obj/%.o: src/%.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+obj/%.o: testsrc/%.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-$(OBJDIR)/%.o: $(TESTSRCDIR)/%.cpp
-	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 run: all
 	./$(EXEC)
 
 clean:
-	rm -rf $(OBJDIR) $(BINDIR)
+	rm -rf $(OBJDIRECT) $(BINDIRECT)
 
 # Create directories
 directories:
-	mkdir -p $(OBJDIR) $(BINDIR)
+	mkdir -p $(OBJDIRECT) $(BINDIRECT)

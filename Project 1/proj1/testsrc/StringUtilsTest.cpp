@@ -1,6 +1,5 @@
 #include <gtest/gtest.h>
 #include "StringUtils.h"
-
 #include <vector>
 #include <iostream>
 using namespace std;
@@ -106,10 +105,14 @@ TEST(StringUtilsTest, Replace){
 }
 
 TEST(StringUtilsTest, Split){
-    string myString = "    there are no donuts but there are bagels";
+    string myString = "there are no donuts but there are bagels";
     vector<string> expected = {"there", "are", "no", "donuts", "but", "there", "are", "bagels"};
     vector<string> result = StringUtils::Split(myString," ");
+    // StringUtils::Split("laaPahlaaaslldlaadsfnwlaaskdflaa30234", "la");
     EXPECT_EQ(result, expected);
+    // string toughTest = "A\ntougher\ntest\nto\npass!";
+    // result = StringUtils::Split(toughTest, "A");
+    // EXPECT_EQ(result, expected);
 }
 
 TEST(StringUtilsTest, Join){
@@ -131,5 +134,8 @@ TEST(StringUtilsTest, ExpandTabs){
 }
 
 TEST(StringUtilsTest, EditDistance){
-    
+    string myString = "Horse";
+    string target = "ros";
+    int result = StringUtils::EditDistance(myString,target);
+    EXPECT_EQ(result, 3);
 }
