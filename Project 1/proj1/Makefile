@@ -10,10 +10,10 @@ TESTDIRECT = testsrc
 OBJDIRECT = obj
 BINDIRECT = bin
 # CReating file teststrutils and linking it with the cpp and cpptest file
-TARGET = teststrutils
+# TARGET = teststrutils
 SRCS = $(SRCDIRETC)/StringUtils.cpp $(TESTDIRECT)/StringUtilsTest.cpp
 OBJS = $(OBJDIRECT)/StringUtils.o $(OBJDIRECT)/StringUtilsTest.o
-EXEC = $(BINDIRECT)/$(TARGET)
+EXEC = $(BINDIRECT)/teststrutils
 
 
 all: directories $(EXEC)
