@@ -2,8 +2,8 @@
 #  Making sure c++17
 #  Inlcuding the files that my makefile needs to access
 CXX = g++
-CXXFLAGS = -std=c++17 -Wall -Iinclude -I/usr/include/gtest
-LDFLAGS = -lgtest -lgtest_main -pthread
+CXXFLAGS = -std=c++17 -Wall -Iinclude -I/usr/include/gtest 
+LDFLAGS = -lgtest -lgtest_main -pthread -lexpat
 # Directories
 SRCDIRECT = src
 TESTDIRECT = testsrc
