@@ -25,7 +25,7 @@ std::string Slice(const std::string &str, ssize_t start, ssize_t end) noexcept{
         end = end + inputString.size();
     }
     // Loop from start index to the end index
-    for (int i = start; i < end; i++){
+    for (ssize_t i = start; i < end; i++){
         // Input each index from the start to the end index but not including the end
         resultString << inputString.at(i);
     }
@@ -37,7 +37,7 @@ std::string Slice(const std::string &str, ssize_t start, ssize_t end) noexcept{
 std::string Capitalize(const std::string &str) noexcept{
     string inputString = str;
     // Turn all the string into lower case
-    for (int i = 0; i < inputString.length(); i++){
+    for (size_t i = 0; i < inputString.length(); i++){
         inputString.at(i) = tolower(inputString.at(i));
     }
     // Turn the first char to upper case
@@ -50,7 +50,7 @@ std::string Capitalize(const std::string &str) noexcept{
 std::string Upper(const std::string &str) noexcept{
     string inputString = str;
     // Turn all the char to upper case by looping through the size
-    for(int i = 0; i < inputString.size(); i++){
+    for(size_t i = 0; i < inputString.size(); i++){
         inputString.at(i) = toupper(inputString.at(i));
     }
     string finalString = inputString;
@@ -60,7 +60,7 @@ std::string Upper(const std::string &str) noexcept{
 std::string Lower(const std::string &str) noexcept{
     string inputString = str;
     // Loop through the size of the string and turn individual char to lower case
-    for(int i = 0; i < inputString.size(); i++){
+    for(size_t i = 0; i < inputString.size(); i++){
         inputString.at(i) = tolower(inputString.at(i));
     }
     string finalString = inputString;
@@ -71,7 +71,7 @@ std::string LStrip(const std::string &str) noexcept{
     string inputString = str;
     int firstChar;
     // Loop throuhg the entire string from left to right
-    for (int i = 0; i < inputString.size(); i++){
+    for (size_t i = 0; i < inputString.size(); i++){
         // Break out of the loop once we detect the first instance where the string is not a white space
         if(inputString.at(i) != ' '){
             firstChar = i;
@@ -97,7 +97,7 @@ std::string RStrip(const std::string &str) noexcept{
     // Parse the string with firstChar as the end and 0 as the start
     string finalString = StringUtils::Slice(inputString, 0, firstChar);
 
-    // for(int i = str.size() - 1; i > -1; i--){
+    // for(size_t i = str.size() - 1; i > -1; i--){
     //     cout << inputString.at(i);
     // }
     // cout << "\n";
@@ -109,7 +109,7 @@ std::string Strip(const std::string &str) noexcept{
     int leftFirstChar;
     int rightFirstChar;
     // Find the first instance on the left where the char is not a white space
-    for (int i = 0; i < inputString.size(); i++){
+    for (size_t i = 0; i < inputString.size(); i++){
         if(inputString.at(i) != ' '){
             // cout << "Found the first char that is not a whitespace from the left which is: " << inputString.at(i) << " at index: " << i << "\n";
             leftFirstChar = i;
@@ -226,7 +226,7 @@ std::string Replace(const std::string &str, const std::string &old, const std::s
     string stringToReplace = old;
     string replaceAs = rep;
     string inputString = str;
-    int sizeOfOldString = old.size();
+    // int sizeOfOldString = old.size();
     unordered_map<int,bool> OldStringIndexes;
     // Find the first instance where the string is the same
     int matchingIndex = inputString.find(old);
@@ -240,7 +240,7 @@ std::string Replace(const std::string &str, const std::string &old, const std::s
         }
     }
     // loop for the size of the string
-    for(int i = 0; i < inputString.size(); i++){
+    for(size_t i = 0; i < inputString.size(); i++){
         // if the index has been marked as the string to be replaced
         if(OldStringIndexes[i] == true){
             // input the replace string in place of the old string
@@ -282,7 +282,7 @@ std::vector< std::string > Split(const std::string &str, const std::string &splt
     // // Base case / First instance
     // int matchingIndex = inputString.find(splt);
     // SplitCharIndex[matchingIndex] = true;
-    // for(int i = matchingIndex; i < matchingIndex+splt.size(); i++){
+    // for(size_t i = matchingIndex; i < matchingIndex+splt.size(); i++){
     //     SplitCharIndex[i] = true;
     // }
 
@@ -292,13 +292,13 @@ std::vector< std::string > Split(const std::string &str, const std::string &splt
     //         // cout << "Found matching starting at: " << matchingIndex << "\n";
     //         SplitCharIndex[matchingIndex] = true;
     //         // cout << matchingIndex << " " << splt.size() << "\n";
-    //         for(int i = matchingIndex; i < matchingIndex+splt.size(); i++){
+    //         for(size_t i = matchingIndex; i < matchingIndex+splt.size(); i++){
     //             // cout << "Rest of the matching string: " << i << "\n";
     //             SplitCharIndex[i] = true;
     //         }
     //     }
     // }
-    // for(int i = 0; i < inputString.size(); i++){
+    // for(size_t i = 0; i < inputString.size(); i++){
     //     if(SplitCharIndex[i] == true){
     //         stringOrder++;
     //     }else{
@@ -312,7 +312,7 @@ std::vector< std::string > Split(const std::string &str, const std::string &splt
     //     i++;
     // }
 
-    // for(int i = VectorOfString.size()-1; i > -1; i--){
+    // for(size_t i = VectorOfString.size()-1; i > -1; i--){
     //     FinalVector.push_back(VectorOfString.at(i));
     // }
 
@@ -329,7 +329,7 @@ std::string Join(const std::string &str, const std::vector< std::string > &vect)
     stringstream runningString;
     string charToJoin = str;
     // Loop for the size of the vector
-    for (int i = 0; i < vect.size(); i++){
+    for (size_t i = 0; i < vect.size(); i++){
         // Do not input the char used to join the strings in the vector if it is the beginning or end
         if (i == vect.size()-1){
             runningString << vect.at(i);
@@ -359,7 +359,7 @@ std::string ExpandTabs(const std::string &str, int tabsize) noexcept{
     //     }
     // }
 
-    // for(int i = 0; i < inputString.size(); i++){
+    // for(size_t i = 0; i < inputString.size(); i++){
     //     if(TabLocations[i] == true){
     //         if()
     //         for(int j = 0; j < tabsize; j++){
@@ -385,7 +385,7 @@ std::string ExpandTabs(const std::string &str, int tabsize) noexcept{
     //     // if(endSplit != string::npos){
     //         runningString << inputString.substr(startSplit, endSplit-startSplit);
     //         if(endSplit != string::npos){
-    //             for(int i = 0; i < tabsize-1; i++){
+    //             for(size_t i = 0; i < tabsize-1; i++){
     //                 runningString << " ";
     //             }
     //         }
@@ -406,7 +406,7 @@ std::string ExpandTabs(const std::string &str, int tabsize) noexcept{
             whiteSpaces = (currPos % tabsize) - tabsize;
             whiteSpaces = abs(whiteSpaces);
             // Input i < whiteSpaces amount of white spaces
-            for(int i = 0; i < whiteSpaces; i++){
+            for(size_t i = 0; i < whiteSpaces; i++){
                 runningString << ' ';
             }
             // Update the current position pass the white spaces
@@ -439,20 +439,20 @@ int EditDistance(const std::string &left, const std::string &right, bool ignorec
     //     return left.size();
     // }
     // Loops for the size of inputStringOne plus the empty string
-    for(int i = 0; i < inputStringOne.size() + 1; i++){
+    for(size_t i = 0; i < inputStringOne.size() + 1; i++){
         // The empty string will always have a minimum of the size of the subtring at the given index
         Matrix2D[i][0] = i;
     }
     // Same thing for the second string
-    for(int i = 0; i < inputStringTwo.size() + 1; i++){
+    for(size_t i = 0; i < inputStringTwo.size() + 1; i++){
         Matrix2D[0][i] = i;
     }
 
     // Nested for loop that loops through all the "squares" in the 2D matrix to calculate all the minimum operations
     // for insertion, deletion, replacement, or if the string is the same
     // Additionally we already computed both column 0 and row 0 because they are empty strings so we can start at 1
-    for(int i = 1; i < inputStringOne.size()+1; i++){
-        for(int j = 1; j < inputStringTwo.size()+1; j++){
+    for(size_t i = 1; i < inputStringOne.size()+1; i++){
+        for(size_t j = 1; j < inputStringTwo.size()+1; j++){
             // There are 3 paths are can take so we must consider all the operations that can occur and take the minimum
             // Deleting means to remove the character
             int deleting = Matrix2D[i-1][j]+1;
