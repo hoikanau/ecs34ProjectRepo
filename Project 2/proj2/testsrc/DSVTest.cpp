@@ -12,34 +12,18 @@
 using namespace std;
 
 TEST(CDSVWriterTest, TestForWriter1) {
-    // Create a string sink
     auto sink = make_shared<CStringDataSink>();
-
-    // Instantiate the DSV writer (CSV-style) with ',' as the delimiter
-    // and quoteall = false (only quote when necessary)
     CDSVWriter writer(sink, ',', false);
-
-    // Write a header row
     vector<std::string> header = {"Name", "Age", "Comment"};
     writer.WriteRow(header);
-
-    // Write a simple row with no quotes required
-    vector<std::string> row1 = {"Alice", "30", "No issues"};
+    vector<std::string> row1 = {"Bob", "12", "Brain damaged"};
     writer.WriteRow(row1);
-
-    // Write a row that contains quotes and commas
-    //  - The field "He said \"Hello,\" then left" should be quoted and internal quotes doubled
-    vector<std::string> row2 = {"Bob", "40", "He said \"Hello,\" then left"};
+    vector<std::string> row2 = {"Tester", "0", "This is a \"test\" com,ment"};
     writer.WriteRow(row2);
-
-    // Build the expected CSV output as a single string (including newlines)
-    // Note that the quotes around "He said \"Hello,\" then left" will become "He said ""Hello,"" then left"
     string expected_output = 
         "Name,Age,Comment\n"
-        "Alice,30,No issues\n"
-        "Bob,40,\"He said \"\"Hello,\"\" then left\"\n";
-
-    // Check if the sink's string matches the expected CSV output
+        "Bob,12,Brain damaged\n"
+        "Tester,0,\"This is a \"\"test\"\" com,ment\"\n";
     EXPECT_EQ(sink->String(), expected_output);
 }
 

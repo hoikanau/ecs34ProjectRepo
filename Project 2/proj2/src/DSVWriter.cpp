@@ -97,7 +97,7 @@ bool CDSVWriter::WriteRow(const vector<string>& row)
         // Checks if we are at the last set of string in the vector, if it is not the last set of string then write the delimiter then go back to the beginning of the loop
         if (i < row.size() - 1){
             // If we did not successfully write the delimiter then return false
-            if (DImplementation->FileSink->Put(DImplementation->userDelimiter == false)){
+            if (DImplementation->FileSink->Put(DImplementation->userDelimiter) == false){
                 return false;
             }
         }
