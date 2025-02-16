@@ -40,7 +40,7 @@ bool CDSVWriter::WriteRow(const vector<string>& row)
     }
 
     // Loop for the size of the row which is passed in by the user
-    for (int i = 0; i < row.size(); i++){
+    for (size_t i = 0; i < row.size(); i++){
         // declaring a const string& so that it is not modifiable and we don't copy it to improve runtime incase the size of the string in row[i] is too large
         // currentField is the string at row index i
         const string& currentString = row[i];

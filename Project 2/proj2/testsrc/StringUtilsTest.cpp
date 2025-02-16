@@ -17,7 +17,6 @@ TEST(StringUtilsTest, SliceTest){
 }
 
 TEST(StringUtilsTest, Capitalize){
-    int totalStrings = 5;
     string stringOne = "test";
     string stringTwo = "Abc dEF";
     string stringThree = "aiSONf sdflwl dn";

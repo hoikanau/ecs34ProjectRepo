@@ -143,11 +143,13 @@ bool CDSVReader::ReadRow(vector<string>& row)
             // push currentField to row and return true
             row.push_back(currentField);
             return true;
+        }
         // otherwise it is just a character in the string so append it to currentField and go back to the beginning of the loop
-        }else{
+        else{
             currentField.push_back(currentChar);
         }
     }
+    return false;
 }
 
 // class CDSVReader{

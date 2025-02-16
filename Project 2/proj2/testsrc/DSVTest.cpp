@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <memory>
 #include <string>
+#include <fstream>
 #include "StringDataSink.h"
 #include "StringDataSource.h"
 #include "DataSource.h"
@@ -45,4 +46,26 @@ TEST(CDSVReaderTest, TestForReader1){
     ASSERT_TRUE(myReader.ReadRow(row));
     EXPECT_EQ(row[1], "Tes,ting");
     ASSERT_FALSE(myReader.ReadRow(row));
+}
+
+
+TEST(CDSVComprehensive, ReaderAndWriterTest){
+    auto mySink = make_shared<CStringDataSink>();
+    CDSVWriter TheWriter(mySink, ',', false);
+
+    ASSERT_TRUE(TheWriter.WriteRow({"Name, Age, School, Hometown"}));
+    ASSERT_TRUE(TheWriter.WriteRow({"Henry, 20, UCD, China"}));
+    ASSERT_TRUE(TheWriter.WriteRow({"Bob, 23, UCR, England"}));
+    ASSERT_TRUE(TheWriter.WriteRow({"Len, 21, UCB, USA"}));
+
+    // string csvPtr = mySink->String();
+
+    // string outputFileName = "testoutput.csv";
+    {
+        // ofstream output(outputFileName, ios::binary);
+        // output << csvPtr;
+    }
+
+
+
 }

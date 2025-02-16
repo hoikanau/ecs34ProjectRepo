@@ -262,7 +262,7 @@ std::vector< std::string > Split(const std::string &str, const std::string &splt
     int startSplit = 0;
     int endSplit = 0;
     // while loop that checks if endSplit is equal to npos meaning that there are no more string that is equal to the given splt
-    while(endSplit != string::npos){
+    while(endSplit != (int)string::npos){
         endSplit = inputString.find(splt, startSplit);
         // Parse the string so we only include the part that is separated by the split indicator
         // Then push the string onto the vector
@@ -393,7 +393,7 @@ std::string ExpandTabs(const std::string &str, int tabsize) noexcept{
     //     // }
     // }
     // Base case if the tab doesnt exist then just return the string
-    if(inputString.find("\t") == -1){
+    if((int)inputString.find("\t") == -1){
         return inputString;
     }
 
@@ -406,7 +406,7 @@ std::string ExpandTabs(const std::string &str, int tabsize) noexcept{
             whiteSpaces = (currPos % tabsize) - tabsize;
             whiteSpaces = abs(whiteSpaces);
             // Input i < whiteSpaces amount of white spaces
-            for(size_t i = 0; i < whiteSpaces; i++){
+            for(int i = 0; i < whiteSpaces; i++){
                 runningString << ' ';
             }
             // Update the current position pass the white spaces
