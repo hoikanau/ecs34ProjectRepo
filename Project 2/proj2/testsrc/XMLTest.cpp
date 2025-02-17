@@ -1,32 +1,30 @@
-// XMLTest.cpp
 #include <gtest/gtest.h>
 #include <memory>
 #include <string>
 #include <vector>
-
-#include "XMLReader.h"
-#include "XMLWriter.h"
 #include "StringDataSource.h"
 #include "StringDataSink.h"
+#include "XMLReader.h"
+#include "XMLWriter.h"
 #include "XMLEntity.h"
 
-// Test for XMLReader using a simple XML document.
+// Test for XMLreader using a simple XML
 TEST(XMLReaderTest, BasicParsing) {
-    // A simple XML document without extra whitespace.
+    // A simple XML document without extra whitespace
     std::string xml = "<root><child attr=\"value\">Text</child><empty/></root>";
     auto source = std::make_shared<CStringDataSource>(xml);
     CXMLReader reader(source);
 
     SXMLEntity entity;
     std::vector<SXMLEntity> entities;
-    // Read all entities from the XML input.
+    // Read all entities from XML input
     while (reader.ReadEntity(entity)) {
         entities.push_back(entity);
     }
 
-    // Expected sequence:
+    // Expected:
     // 1. StartElement "root"
-    // 2. StartElement "child" with attribute attr="value"
+    // 2. StartElement "child" with attribut attr="value"
     // 3. CharData "Text"
     // 4. EndElement "child"
     // 5. StartElement "empty"  (for a self-closing element, Expat issues a start and then an end)
@@ -34,26 +32,26 @@ TEST(XMLReaderTest, BasicParsing) {
     // 7. EndElement "root"
     ASSERT_EQ(entities.size(), 7u);
 
-    // Check the "root" element.
+    // Check the "root" element
     EXPECT_EQ(entities[0].DType, SXMLEntity::EType::StartElement);
     EXPECT_EQ(entities[0].DNameData, "root");
 
-    // Check the "child" start element.
+    // Check the "child" start element
     EXPECT_EQ(entities[1].DType, SXMLEntity::EType::StartElement);
     EXPECT_EQ(entities[1].DNameData, "child");
     ASSERT_EQ(entities[1].DAttributes.size(), 1u);
     EXPECT_EQ(entities[1].DAttributes[0].first, "attr");
     EXPECT_EQ(entities[1].DAttributes[0].second, "value");
 
-    // Check the character data.
+    // Check the character data
     EXPECT_EQ(entities[2].DType, SXMLEntity::EType::CharData);
     EXPECT_EQ(entities[2].DNameData, "Text");
 
-    // Check the "child" end element.
+    // Check the "child" end element
     EXPECT_EQ(entities[3].DType, SXMLEntity::EType::EndElement);
     EXPECT_EQ(entities[3].DNameData, "child");
 
-    // Check the "empty" element.
+    // Check the "empty" element
     EXPECT_EQ(entities[4].DType, SXMLEntity::EType::StartElement);
     EXPECT_EQ(entities[4].DNameData, "empty");
     EXPECT_EQ(entities[5].DType, SXMLEntity::EType::EndElement);
@@ -64,7 +62,7 @@ TEST(XMLReaderTest, BasicParsing) {
     EXPECT_EQ(entities[6].DNameData, "root");
 }
 
-// Test for XMLReader when skipping character data (CDATA).
+// Test for XMLReader when skipping character data (CDATA)
 TEST(XMLReaderTest, SkipCData) {
     std::string xml = "<root><child attr=\"value\">Text</child><empty/></root>";
     auto source = std::make_shared<CStringDataSource>(xml);
@@ -72,7 +70,7 @@ TEST(XMLReaderTest, SkipCData) {
 
     SXMLEntity entity;
     std::vector<SXMLEntity> entities;
-    // Use the skipcdata flag to avoid returning CharData entities.
+    // Use the skipcdata flag to avoid returning CharData entities
     while (reader.ReadEntity(entity, true)) {
         entities.push_back(entity);
     }
@@ -95,7 +93,7 @@ TEST(XMLReaderTest, SkipCData) {
 
 // Test for XMLWriter: write a basic XML document using start/end elements.
 TEST(XMLWriterTest, WriteBasicXML) {
-    // We will write out: <root><child attr="value">Text</child><empty></empty></root>
+    // We will write: <root><child attr="value">Text</child><empty></empty></root>
     auto sink = std::make_shared<CStringDataSink>();
     CXMLWriter writer(sink);
 
@@ -123,6 +121,7 @@ TEST(XMLWriterTest, WriteBasicXML) {
     SXMLEntity emptyEnd;
     emptyEnd.DType = SXMLEntity::EType::EndElement;
     emptyEnd.DNameData = "empty";
+\
 
     SXMLEntity rootEnd;
     rootEnd.DType = SXMLEntity::EType::EndElement;
@@ -135,17 +134,18 @@ TEST(XMLWriterTest, WriteBasicXML) {
     EXPECT_TRUE(writer.WriteEntity(emptyStart));
     EXPECT_TRUE(writer.WriteEntity(emptyEnd));
     EXPECT_TRUE(writer.WriteEntity(rootEnd));
-    // Flush to ensure all open elements are closed.
+
+    // Flush to ensure all open elements are closed
     EXPECT_TRUE(writer.Flush());
 
     std::string output = sink->String();
-    // The expected output (no extra whitespace/newlines) is:
+    // The expected otput (no extra whitespace/newlines) is:
     // "<root><child attr=\"value\">Text</child><empty></empty></root>"
     std::string expected = "<root><child attr=\"value\">Text</child><empty></empty></root>";
     EXPECT_EQ(output, expected);
 }
 
-// Test for XMLWriter: writing a self-closing (complete) element.
+// Test for XMLWrter: writing a self closing (complete) element.
 TEST(XMLWriterTest, WriteCompleteElement) {
     auto sink = std::make_shared<CStringDataSink>();
     CXMLWriter writer(sink);
@@ -154,6 +154,7 @@ TEST(XMLWriterTest, WriteCompleteElement) {
     complete.DType = SXMLEntity::EType::CompleteElement;
     complete.DNameData = "line";
     complete.DAttributes.push_back({"num", "1"});
+
 
     EXPECT_TRUE(writer.WriteEntity(complete));
 
