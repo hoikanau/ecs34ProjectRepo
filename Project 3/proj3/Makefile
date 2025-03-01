@@ -11,8 +11,30 @@ OBJDIRECT = obj
 BINDIRECT = bin
 
 
-SRCS = $(SRCDIRECT)/StringUtils.cpp $(SRCDIRECT)/StringDataSink.cpp $(SRCDIRECT)/StringDataSource.cpp $(TESTDIRECT)/StringUtilsTest.cpp $(TESTDIRECT)/StringDataSinkTest.cpp $(TESTDIRECT)/StringDataSourceTest.cpp $(TESTDIRECT)/DSVTest.cpp $(SRCDIRECT)/COpenStreetMap.cpp $(TESTDIRECT)/OpenStreetMapTest.cpp
-OBJS = $(OBJDIRECT)/StringUtils.o $(OBJDIRECT)/StringUtilsTest.o $(OBJDIRECT)/StringDataSink.o $(OBJDIRECT)/StringDataSource.o $(OBJDIRECT)/StringDataSinkTest.o $(OBJDIRECT)/StringDataSourceTest.o $(OBJDIRECT)/DSVTest.o $(OBJDIRECT)/COpenStreetMap.o $(OBJDIRECT)/OpenStreetMapTest.o
+SRCS = $(SRCDIRECT)/StringUtils.cpp \
+	$(SRCDIRECT)/StringDataSink.cpp \
+	$(SRCDIRECT)/StringDataSource.cpp \
+	$(TESTDIRECT)/StringUtilsTest.cpp \
+	$(TESTDIRECT)/StringDataSinkTest.cpp \
+	$(TESTDIRECT)/StringDataSourceTest.cpp \
+	$(SRCDIRECT)/XMLReader.cpp \
+	$(SRCDIRECT)/XMLWriter.cpp \
+	$(TESTDIRECT)/XMLTest.cpp \
+	$(TESTDIRECT)/DSVTest.cpp \
+	$(SRCDIRECT)/COpenStreetMap.cpp \
+	$(TESTDIRECT)/OpenStreetMapTest.cpp 
+OBJS = $(OBJDIRECT)/StringUtils.o \
+	$(OBJDIRECT)/StringUtilsTest.o \
+	$(OBJDIRECT)/StringDataSink.o \
+	$(OBJDIRECT)/StringDataSource.o \
+	$(OBJDIRECT)/StringDataSinkTest.o \
+	$(OBJDIRECT)/StringDataSourceTest.o \
+	$(OBJDIRECT)/DSVTest.o \
+	$(OBJDIRECT)/COpenStreetMap.o \
+	$(OBJDIRECT)/OpenStreetMapTest.o \
+	$(OBJDIRECT)/XMLReader.o \
+	$(OBJDIRECT)/XMLWriter.o \
+	$(OBJDIRECT)/XMLTest.o
 EXEC = $(BINDIRECT)/teststrutils $(BINDIRECT)/teststrdatasource $(BINDIRECT)/teststrdatasink $(BINDIRECT)/testdsv $(BINDIRECT)/testxml $(BINDIRECT)/testosm
 
 all: directories $(EXEC)

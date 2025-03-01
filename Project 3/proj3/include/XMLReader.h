@@ -16,6 +16,7 @@ class CXMLReader{
         
         bool End() const;
         bool ReadEntity(SXMLEntity &entity, bool skipcdata = false);
+        void Reset() const;
 };
 
 #endif

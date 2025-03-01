@@ -11,7 +11,7 @@ struct CXMLReader::SImplementation {
     std::shared_ptr<CDataSource> source;
     std::string xmlData;                // holds complete XML text
     std::vector<SXMLEntity> entities;  // parsed XML entities
-    mutable size_t currIndex;                 // next entity index to return
+    size_t currIndex;                 // next entity index to return
     XML_Parser pars;                 // Expat parser instance
 
     SImplementation(std::shared_ptr<CDataSource> src): source(src), currIndex(0){
