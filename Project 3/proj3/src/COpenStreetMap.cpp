@@ -17,13 +17,13 @@ struct COpenStreetMap::SImplementation
 {
     struct SNode : public CStreetMap::SNode
     {
-        TNodeID DNodeID;
+        TNodeID nodeID;
         TLocation DLocation;
         vector<pair<string, string>> DAttributes;
         // Returns the id of the SNode
         TNodeID ID() const noexcept
         {
-            return DNodeID;
+            return nodeID;
         }
         // Returns the lat/lon location of the SNode
         TLocation Location() const noexcept
@@ -234,7 +234,7 @@ COpenStreetMap::COpenStreetMap(shared_ptr<CXMLReader> src) : DImplementation(mak
                 {
                     if (att.first == "id")
                     {
-                        currentNode.DNodeID = stoull(att.second);
+                        currentNode.nodeID = stoull(att.second);
                     }
                     else if (att.first == "lat")
                     {
