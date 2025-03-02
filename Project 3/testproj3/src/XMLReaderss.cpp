@@ -5,14 +5,13 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include <iostream>
 
 // PIMPL structure for CXMLReader
 struct CXMLReader::SImplementation {
     std::shared_ptr<CDataSource> source;
     std::string xmlData;                // holds complete XML text
     std::vector<SXMLEntity> entities;  // parsed XML entities
-    mutable size_t currIndex;                 // next entity index to return
+    size_t currIndex;                 // next entity index to return
     XML_Parser pars;                 // Expat parser instance
 
     SImplementation(std::shared_ptr<CDataSource> src): source(src), currIndex(0){
@@ -33,11 +32,9 @@ struct CXMLReader::SImplementation {
 
         // Parse the XML data
         if (XML_Parse(pars, xmlData.c_str(), static_cast<int>(xmlData.size()), XML_TRUE) == XML_STATUS_ERROR) {
-            std::cerr << "XML Parse error: " << XML_ErrorString(XML_GetErrorCode(pars)) << std::endl;
             // If a parsing error occurs, clear the entities
             entities.clear();
         }
-        
 
         XML_ParserFree(pars);
     }
@@ -120,4 +117,8 @@ bool CXMLReader::ReadEntity(SXMLEntity &entity, bool skipcdata) {
 
     return false;
 
+}
+
+void CXMLReader::Reset() const{
+    DImplementation->currIndex = 0;
 }

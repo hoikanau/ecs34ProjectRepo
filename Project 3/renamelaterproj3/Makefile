@@ -23,7 +23,7 @@ SRCS = $(SRCDIRECT)/StringUtils.cpp \
 	$(TESTDIRECT)/DSVTest.cpp \
 	$(SRCDIRECT)/OpenStreetMap.cpp \
 	$(TESTDIRECT)/OpenStreetMapTest.cpp \
-	$(SRCDIRECT)/CSVBusSystem.cpp \
+	$(SRCDIRECT)/CCSVBusSystem.cpp \
 	$(TESTDIRECT)/CSVBusSystemTest.cpp
 OBJS = $(OBJDIRECT)/StringUtils.o \
 	$(OBJDIRECT)/StringUtilsTest.o \
@@ -37,7 +37,7 @@ OBJS = $(OBJDIRECT)/StringUtils.o \
 	$(OBJDIRECT)/XMLTest.o \
 	$(OBJDIRECT)/OpenStreetMap.o \
 	$(OBJDIRECT)/OpenStreetMapTest.o \
-	$(OBJDIRECT)/CSVBusSystem.o \
+	$(OBJDIRECT)/CCSVBusSystem.o \
 	$(OBJDIRECT)/CSVBusSystemTest.o
 EXEC = $(BINDIRECT)/teststrutils \
 	$(BINDIRECT)/teststrdatasource \

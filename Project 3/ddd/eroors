@@ -1,0 +1,6 @@
+Test Failed: b'Sto[18 chars]unt: 1\nIndex 0 
+IsSameInstance: 1\nStop1Index:[132 chars] 102' != b'Sto[18 chars]unt: 0\nIndex 0 IsSameInstance: 1\nStop1Index:[132 chars] 102'
+
+
+
+Test Failed: b'Nod[48 chars]nce: 0\nNode1Index: 1\nNode1 ID: 1\nNode1 Attr[288 chars]2.31' != b'Nod[48 chars]nce: 1\nNode1Index: 1\nNode1 ID: 1\nNode1 Attr[288 chars]2.31'
