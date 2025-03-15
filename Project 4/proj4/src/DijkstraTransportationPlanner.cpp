@@ -14,7 +14,7 @@
 using namespace std;
 
 // This is a helper function 
-// to calculated the coordinal distances between two locations
+// to calculated the coordinate distances between two locations
 static double CalculateCoordinateDifference(const CStreetMap::TLocation &loc1, const CStreetMap::TLocation &loc2) {
     double dx = loc1.first - loc2.first;
     double dy = loc1.second - loc2.second;
