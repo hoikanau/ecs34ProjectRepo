@@ -1,5 +1,3 @@
-// CTransportationPlanner.cpp
-
 #include "TransportationPlanner.h"
 #include "StreetMap.h"
 #include "BusSystem.h"
@@ -12,157 +10,156 @@
 #include <chrono>
 #include <cmath>
 #include <sstream>
-#include <iterator>  // For std::begin and std::end
+#include <iterator> 
+using namespace std;
 
-// Helper function to compute Euclidean distance between two locations.
-static double EuclideanDistance(const CStreetMap::TLocation &loc1, const CStreetMap::TLocation &loc2) {
+// This is a helper function 
+// to calculated the coordinal distances between two locations
+static double CalculateCoordinateDifference(const CStreetMap::TLocation &loc1, const CStreetMap::TLocation &loc2) {
     double dx = loc1.first - loc2.first;
     double dy = loc1.second - loc2.second;
-    return std::sqrt(dx * dx + dy * dy);
+    return sqrt(dx * dx + dy * dy);
 }
 
-// Concrete implementation of CTransportationPlanner.
+// PIMPLE STRUCTURE
 class CTransportationPlannerImpl : public CTransportationPlanner {
 public:
-    CTransportationPlannerImpl(std::shared_ptr<SConfiguration> config)
-        : mConfig(config),
-          mStreetMap(config->StreetMap()),
-          mBusSystem(config->BusSystem())
+    CTransportationPlannerImpl(shared_ptr<SConfiguration> configuration) : InputConfig(configuration), InputStreetMap(configuration->StreetMap()), InputBusSystem(configuration->BusSystem())
     {
-        // Build a sorted vector of nodes from the street map.
-        std::size_t nodeCount = mStreetMap->NodeCount();
-        for (std::size_t i = 0; i < nodeCount; i++) {
-            auto node = mStreetMap->NodeByIndex(i);
+        // Constructing a sorted vector of nodes from input file
+        size_t nodeCount = InputStreetMap->NodeCount();
+        for (size_t i = 0; i < nodeCount; i++) {
+            auto node = InputStreetMap->NodeByIndex(i);
             if (node)
-                mSortedNodes.push_back(node);
+                {InputSortedNodes.push_back(node);}
         }
-        // Sort nodes by their ID.
-        std::sort(mSortedNodes.begin(), mSortedNodes.end(),
-            [](const std::shared_ptr<CStreetMap::SNode>& a,
-               const std::shared_ptr<CStreetMap::SNode>& b) {
-                return a->ID() < b->ID();
-            });
-        // Build a mapping from node ID to its vertex index.
-        for (std::size_t i = 0; i < mSortedNodes.size(); i++) {
-            mNodeToVertex[mSortedNodes[i]->ID()] = i;
+        // Sorting nodes by their ID using a lambda structure.
+        sort(InputSortedNodes.begin(), InputSortedNodes.end(), [](const shared_ptr<CStreetMap::SNode>& a,const shared_ptr<CStreetMap::SNode>& b) {return a->ID() < b->ID(); });
+        for (size_t i = 0; i < InputSortedNodes.size(); i++) {
+            InputNodeToVertex[InputSortedNodes[i]->ID()] = i;
         }
 
-        // Create the path router (using a Dijkstra-based implementation).
-        mPathRouter = std::make_unique<CDijkstraPathRouter>();
+        // Using CDijkstraPathRouter to complete the Planner
+        InputPathRouter = make_unique<CDijkstraPathRouter>();
 
-        // Add each node as a vertex in the router.
-        for (std::size_t i = 0; i < mSortedNodes.size(); i++) {
-            mPathRouter->AddVertex(mSortedNodes[i]);
+        // Each node will be appended to the route as a new vertex
+        for (size_t i = 0; i < InputSortedNodes.size(); i++) {
+            InputPathRouter->AddVertex(InputSortedNodes[i]);
         }
 
-        // Add edges based on the ways in the street map.
-        std::size_t wayCount = mStreetMap->WayCount();
-        for (std::size_t i = 0; i < wayCount; i++) {
-            auto way = mStreetMap->WayByIndex(i);
+        // Append the corresponding ways as edges
+        size_t wayCount = InputStreetMap->WayCount();
+        for (size_t i = 0; i < wayCount; i++) {
+            auto way = InputStreetMap->WayByIndex(i);
             if (!way)
-                continue;
-            std::size_t numNodes = way->NodeCount();
-            // For each consecutive pair of nodes in the way, add an edge.
-            for (std::size_t j = 0; j < numNodes - 1; j++) {
+                {continue;}
+            size_t numNodes = way->NodeCount();
+            for (size_t j = 0; j < numNodes - 1; j++) {
                 auto nodeID1 = way->GetNodeID(j);
                 auto nodeID2 = way->GetNodeID(j + 1);
-                if (mNodeToVertex.find(nodeID1) != mNodeToVertex.end() &&
-                    mNodeToVertex.find(nodeID2) != mNodeToVertex.end())
+                if (InputNodeToVertex.find(nodeID1) != InputNodeToVertex.end() && InputNodeToVertex.find(nodeID2) != InputNodeToVertex.end())
                 {
-                    std::size_t v1 = mNodeToVertex[nodeID1];
-                    std::size_t v2 = mNodeToVertex[nodeID2];
-                    auto loc1 = mSortedNodes[v1]->Location();
-                    auto loc2 = mSortedNodes[v2]->Location();
-                    double dist = EuclideanDistance(loc1, loc2);
-                    // Assume ways are bidirectional.
-                    mPathRouter->AddEdge(v1, v2, dist, true);
+                    size_t v1 = InputNodeToVertex[nodeID1];
+                    size_t v2 = InputNodeToVertex[nodeID2];
+                    auto loc1 = InputSortedNodes[v1]->Location();
+                    auto loc2 = InputSortedNodes[v2]->Location();
+                    double dist = CalculateCoordinateDifference(loc1, loc2);
+                    InputPathRouter->AddEdge(v1, v2, dist, true);
                 }
             }
         }
-        // Precompute the router using the configuration's precompute time.
-        auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(mConfig->PrecomputeTime());
-        mPathRouter->Precompute(deadline);
+        auto time = chrono::steady_clock::now() + chrono::seconds(InputConfig->PrecomputeTime());
+        InputPathRouter->Precompute(time);
     }
 
+
+    // Destructor
     virtual ~CTransportationPlannerImpl() = default;
 
-    // Returns the number of nodes.
-    virtual std::size_t NodeCount() const noexcept override {
-        return mSortedNodes.size();
+    // Returns the number of nodes in the street map
+    virtual size_t NodeCount() const noexcept override {
+        return InputSortedNodes.size();
     }
 
-    // Returns the node at the given sorted index.
-    virtual std::shared_ptr<CStreetMap::SNode> SortedNodeByIndex(std::size_t index) const noexcept override {
-        if (index < mSortedNodes.size())
-            return mSortedNodes[index];
+    // Returns the street map node specified by index if index is less than the
+    // NodeCount(). nullptr is returned if index is greater than or equal to
+    // NodeCount(). The nodes are sorted by Node ID.
+    virtual shared_ptr<CStreetMap::SNode> SortedNodeByIndex(size_t index) const noexcept override {
+        if (index < InputSortedNodes.size())
+           { return InputSortedNodes[index];}
         return nullptr;
     }
 
-    // Find the shortest path (by distance) from src to dest on the street network.
-    virtual double FindShortestPath(TNodeID src, TNodeID dest, std::vector<TNodeID> &path) override {
+    // Returns the distance in miles between the src and destination nodes of the
+    // shortest path if one exists. NoPathExists is returned if no path exists.
+    // The nodes of the shortest path are filled in the path parameter.
+    virtual double FindShortestPath(TNodeID src, TNodeID destination, vector<TNodeID> &path) override {
         // Check if source and destination exist.
-        if (mNodeToVertex.find(src) == mNodeToVertex.end() ||
-            mNodeToVertex.find(dest) == mNodeToVertex.end())
+        if (InputNodeToVertex.find(src) == InputNodeToVertex.end() || InputNodeToVertex.find(destination) == InputNodeToVertex.end())
         {
             return CPathRouter::NoPathExists;
         }
-        std::size_t vsrc = mNodeToVertex[src];
-        std::size_t vdest = mNodeToVertex[dest];
+        size_t vsrc = InputNodeToVertex[src];
+        size_t vdest = InputNodeToVertex[destination];
         // Use fully qualified type for vertex IDs.
-        std::vector<CPathRouter::TVertexID> vPath;
-        double distance = mPathRouter->FindShortestPath(vsrc, vdest, vPath);
+        vector<CPathRouter::TVertexID> vPath;
+        double distance = InputPathRouter->FindShortestPath(vsrc, vdest, vPath);
         path.clear();
         // Convert vertex IDs back to street map node IDs.
         for (auto v : vPath) {
-            if (v < mSortedNodes.size())
-                path.push_back(mSortedNodes[v]->ID());
+            if (v < InputSortedNodes.size())
+                path.push_back(InputSortedNodes[v]->ID());
         }
         return distance;
     }
 
-    // Find the fastest path from src to dest.
-    virtual double FindFastestPath(TNodeID src, TNodeID dest, std::vector<TTripStep> &path) override {
-        std::vector<TNodeID> nodePath;
-        double distance = FindShortestPath(src, dest, nodePath);
+    // Returns the time in hours for the fastest path between the src and destination
+    // nodes of the if one exists. NoPathExists is returned if no path exists.
+    // The transportation mode and nodes of the fastest path are filled in the
+    // path parameter.
+    virtual double FindFastestPath(TNodeID src, TNodeID destination, vector<TTripStep> &path) override {
+        vector<TNodeID> nodePath;
+        double distance = FindShortestPath(src, destination, nodePath);
         path.clear();
         for (auto nodeID : nodePath) {
             path.push_back({ETransportationMode::Walk, nodeID});
         }
-        return (mConfig->WalkSpeed() > 0) ? distance / mConfig->WalkSpeed() : 0;
+        return (InputConfig->WalkSpeed() > 0) ? distance / InputConfig->WalkSpeed() : 0;
     }
 
-    // Generate textual description for each trip step.
-    virtual bool GetPathDescription(const std::vector<TTripStep> &path, std::vector<std::string> &desc) const override {
-        desc.clear();
+    // Returns true if the path description is created. Takes the trip steps path
+    // and converts it into a human readable set of steps.
+    virtual bool GetPathDescription(const vector<TTripStep> &path, vector<string> &description) const override {
+        description.clear();
         if (path.empty())
             return false;
         for (const auto &step : path) {
-            std::ostringstream oss;
+            ostringstream oss;
             switch (step.first) {
                 case ETransportationMode::Walk:
-                    oss << "Walk to node " << step.second;
+                    oss << "Method of Transporation: Walking " << step.second;
                     break;
                 case ETransportationMode::Bike:
-                    oss << "Bike to node " << step.second;
+                    oss << "Method of Transportation: Biking " << step.second;
                     break;
                 case ETransportationMode::Bus:
-                    oss << "Take bus to node " << step.second;
+                    oss << "Method of Transportation: Bussing " << step.second;
                     break;
             }
-            desc.push_back(oss.str());
+            description.push_back(oss.str());
         }
         return true;
     }
 
 private:
-    std::shared_ptr<SConfiguration> mConfig;
-    std::shared_ptr<CStreetMap> mStreetMap;
-    std::shared_ptr<CBusSystem> mBusSystem;
-    std::vector<std::shared_ptr<CStreetMap::SNode>> mSortedNodes;
-    std::unordered_map<TNodeID, std::size_t> mNodeToVertex;
-    std::unique_ptr<CPathRouter> mPathRouter;
+    shared_ptr<SConfiguration> InputConfig;
+    shared_ptr<CStreetMap> InputStreetMap;
+    shared_ptr<CBusSystem> InputBusSystem;
+    vector<shared_ptr<CStreetMap::SNode>> InputSortedNodes;
+    unordered_map<TNodeID, size_t> InputNodeToVertex;
+    unique_ptr<CPathRouter> InputPathRouter;
 };
 
-std::unique_ptr<CTransportationPlanner> CreateTransportationPlanner(std::shared_ptr<CTransportationPlanner::SConfiguration> config) {
-    return std::make_unique<CTransportationPlannerImpl>(config);
+unique_ptr<CTransportationPlanner> CreateTransportationPlanner(shared_ptr<CTransportationPlanner::SConfiguration> configuration) {
+    return make_unique<CTransportationPlannerImpl>(configuration);
 }

@@ -4,7 +4,7 @@
 #include <vector>
 #include <chrono>
 
-TEST(DijkstraPathRouterTest, ShortestPathBasic) {
+TEST(DijkstraPathRouterTest, ShorestPath) {
     CDijkstraPathRouter router;
     auto v0 = router.AddVertex(std::string("A"));
     auto v1 = router.AddVertex(std::string("B"));
