@@ -184,8 +184,8 @@ struct COpenStreetMap::SImplementation
     };
 
     // These two vectors hold ALL of the nodes and ways that is in the OSM file.
-    vector<shared_ptr<SNode>> allNodes;
-    vector<shared_ptr<SWay>> allWays;
+    vector<SNode> allNodes;
+    vector<SWay> allWays;
 };
 
 // Constructor for the Open Street Map
@@ -242,7 +242,7 @@ COpenStreetMap::COpenStreetMap(shared_ptr<CXMLReader> src) : DImplementation(mak
                         nodeTemporary.attributes.push_back(attr);
                     }
                 }
-                DImplementation->allNodes.push_back(make_shared<SImplementation::SNode>(nodeTemporary));
+                DImplementation->allNodes.push_back(nodeTemporary);
             }
             else if (entity.DNameData == "way")
             {
@@ -258,7 +258,7 @@ COpenStreetMap::COpenStreetMap(shared_ptr<CXMLReader> src) : DImplementation(mak
                         tempWay.attributes.push_back(attr);
                     }
                 }
-                DImplementation->allWays.push_back(make_shared<SImplementation::SWay>(tempWay));
+                DImplementation->allWays.push_back(tempWay);
             }
             continue;
         }
@@ -383,13 +383,13 @@ COpenStreetMap::COpenStreetMap(shared_ptr<CXMLReader> src) : DImplementation(mak
             if (entity.DNameData == "node")
             {
                 modifyingNode = false;
-                DImplementation->allNodes.push_back(make_shared<SImplementation::SNode>(currNode));
+                DImplementation->allNodes.push_back(currNode);
             }
             // Similarly with the way, change back modifyingWay from true to false and push the current way onto a vector called allWays
             else if (entity.DNameData == "way")
             {
                 modifyingWay = false;
-                DImplementation->allWays.push_back(make_shared<SImplementation::SWay>(currWay));
+                DImplementation->allWays.push_back(currWay);
             }
             // Now we are ready to loop again for another line
         }
@@ -423,8 +423,7 @@ shared_ptr<CStreetMap::SNode> COpenStreetMap::NodeByIndex(size_t index) const no
         return nullptr;
     }
     // Otherwise return a new shared_ptr that poitns to the element at the given index in allNodes
-    return DImplementation->allNodes[index];
-    // return make_shared<SImplementation::SNode>(DImplementation->allNodes[index]);
+    return make_shared<SImplementation::SNode>(DImplementation->allNodes[index]);
 }
 
 // Returns the SNode with the id of id, returns nullptr if doesn't exist
@@ -435,10 +434,9 @@ shared_ptr<CStreetMap::SNode> COpenStreetMap::NodeByID(TNodeID id) const noexcep
     {
         // Check if the node ID is equal to the user inputted id.
         // If it matches, we have found the correct node to output as a new shared_ptr
-        if (node->ID() == id)
+        if (node.nodeID == id)
         {
-            return node;
-            // return make_shared<SImplementation::SNode>(node);
+            return make_shared<SImplementation::SNode>(node);
         }
     }
     // Otherwise return nullptr
@@ -457,8 +455,7 @@ shared_ptr<CStreetMap::SWay> COpenStreetMap::WayByIndex(size_t index) const noex
         return nullptr;
     }
     // Otherwise return a shared_ptr of the element at the index in allWays
-    return DImplementation->allWays[index];
-    // return make_shared<SImplementation::SWay>(DImplementation->allWays[index]);
+    return make_shared<SImplementation::SWay>(DImplementation->allWays[index]);
 }
 // Returns the SWay with the id of id, returns nullptr if doesn't exist
 shared_ptr<CStreetMap::SWay> COpenStreetMap::WayByID(TWayID id) const noexcept
@@ -467,11 +464,10 @@ shared_ptr<CStreetMap::SWay> COpenStreetMap::WayByID(TWayID id) const noexcept
     for (const auto &way : DImplementation->allWays)
     {
         // Check using the function ID in Sway to see if the way ID matches the one that the user inputted
-        if (way->ID() == id)
+        if (way.wayID == id)
         {
             // If it matches, return a new shared_ptr of the corresponding way
-            // return make_shared<SImplementation::SWay>(way);
-            return way;
+            return make_shared<SImplementation::SWay>(way);
         }
     }
     // Otherwise return nullptr

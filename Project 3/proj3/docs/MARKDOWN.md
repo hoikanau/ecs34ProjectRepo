@@ -1,3 +1,170 @@
+CDSVReader utilizes the following files:
+    include/DSVReader.h    include/DataSource.h
+    src/DSVReader.cpp
+
+This class reads individual rows of a file.
+
+bool End()
+   This function of the CDSVReader checks if the file is at the end.
+   If the file is at the end we want to stop reading and end the function by returning true otherwise return false.
+
+bool ReadRow(std::vector<std::string> &row)
+   This function of the CDSVReader reads the rows of the DSV file and returns true or false if it was successfully read
+
+   For example, if your DSV file is something like this:
+        Name,Age,Comment
+        Bob,12,Four foot six
+        Emily,20,In College
+
+    If you call ReadRow on the DSV file, it will take the first row and input it into the vector/array &row
+    Then it reads the individual characters of the row,
+       In this case: row = Name,Age,Comment
+       it will read The chars one by one until it hits a delimiter which would be the comma
+
+
+CDSVWriter utilizes the following files:
+    include/DSVWriter.h    include/DataSink.h
+    src/DSVWriter.cpp
+
+bool WriteRow(const std::vector<std::string> &row)
+   DSVWriter only has one public function
+   It writes the elements of row into a data sink which is essentially a output file and the function will return true or false if it was successfully written
+   
+   Before writing the file one must create a new CDSVWriter object by calling CDSVWriter writer(sink, delimiter, quoteall);
+    sink refers to the output file
+    delmiter refers to the what char that separates the values
+    quoteall refers to a boolean if the user wants to quote all the values in the row when writing
+    
+    For example, if you already setup some CDSVWriter object called writer // CDSVWriter writer(sink, ',', false)
+        You will write to a output file determined by sink with commas as spacers/delimiters and you will not quote all the values
+    
+    Then calling the following lines:
+        writer.WriteRow({"Name", "Age", "Comment"});
+        writer.WriteRow({"Bob", "21", "Attending ECS34"})
+        writer.WriteRow({"Henry", "12", "Child Prodigy"})
+
+    You will get the following output in the sink:
+        Name,Age,Comment
+        Bob,21,Attending ECS34
+        Henry,12,Child Prodigy
+
+
+CXMLReader:
+    - include/XMLReader.h
+    - include/XMLEntity.h
+    - include/DataSource.h
+    - src/XMLReader.cpp
+
+CXMLReader reads XML data from a data source and converts it into XML entities represented by the SXMLEntity. Each entity corresponds to a start and end elements, character, or complete element in the XML document
+
+1. bool End() const
+-> Checks whether all XML entities have been read from input
+
+-> Returns TRUE when the entire XML input has been processed, indicating that no more entities available 
+-> otherwise, returns FALSE.
+
+2. bool ReadEntity(SXMLEntity &entity, bool skipcdata = false)
+-> Reads the next XML entity from the input
+-> Returns True if an XML entity is able to read, or FLASE if there are no more entities or if an error occurs during parsing
+
+CXMLWriter: 
+    - include/XMLwriter.h
+    - include/XMLEntity.h
+    - include/DataSource.h
+    - src/XMLwriter.cpp
+
+1. bool WriteEntity(const SXMLEntity &entity)
+-> Writes a single XML entity to the output
+-> StartElement, the function writes an opening tag and pushes the element name onto an internal stack.
+-> EndElement, the function writes the corresponding closing tag and pops the element from stack
+-> CompleteElement, the function writes a self closing tag
+-> CharData, the function writes the text contents after escaped special characters such as &, <, >, ", and '.
+
+2. bool Flush():
+-> Ensures that any open XML elements (from previously written start tags) are properly closed
+-> Iterates the internal stack of opened elements and writes the end tags
+-> Returns true if all open tags are correctly closed
+
+
+CSVBusSystem:
+    - CSVBusSystem.h
+    - BusSystem.h
+    - DSVReader.h
+
+    * Helper Functions
+1. RemoveQuotes Function:
+- Purpose: Removes the first and last characters if they are double quotes.
+2. Trim Function:
+- Purpose: Trims leading and trailing whitespace from a string.
+
+
+    * SImplementation Structure
+This private structure within CCSVBusSystem holds two vectors:
+
+- stops: A vector of shared pointers to objects that implement the SStop interface.
+- routes: A vector of shared pointers to objects that implement the SRoute interface.
+
+    * Two inner classes:
+- StopImpl:
+Implements the SStop interface. It stores a stop ID and a node ID.
+
+- RouteImpl:
+Implements the SRoute interface. It stores the route name and a vector of stop IDs that define the route.
+
+* Constructor: CSV Parsing
+- Parsing the Stops CSV
+* Reading Rows:
+- The constructor uses a CDSVReader to read rows from the stops CSV.
+
+* Header Handling:
+- The first row is checked; if its first field (after removing quotes and trimming) equals "stop_id", it is skipped.
+
+* Field Conversion:
+- Each row is expected to have at least two fields. The first field is converted to a stop ID and the second to a node ID using std::stoull.
+
+* Deduplication:
+- An unordered_map is used to ensure that if multiple rows with the same stop ID are encountered, only the first occurrence is stored.
+
+* Storing Data:
+- Valid stops are then pushed into the internal vector.
+
+* Parsing the Routes CSV
+- Reading Rows: Similarly, a second CDSVReader is used to process the routes CSV.
+
+* Header Handling:
+- The first row is skipped if its first field (after cleaning) equals "route_name".
+
+* Route Construction:
+- The first field of each row represents the route name.
+- The remaining fields are treated as stop IDs, which are cleaned, converted, and then verified against the stops already stored.
+
+* Deduplication Within Route:
+- An unordered_set ensures that each stop ID is only included once per route.
+
+* Storing Data:
+- Only routes with at least one valid stop are added to the internal routes vector.
+
+
+
+* StopCount():
+- Returns the number of stops stored.
+
+* RouteCount():
+Returns the number of routes stored.
+
+* StopByIndex(index):
+- Returns a pointer to the stop at the specified index (or nullptr if out-of-bounds).
+
+* StopByID(id):
+- Returns a pointer to the stop with the specified stop ID (or nullptr if not found).
+
+* RouteByIndex(index):
+- Returns a pointer to the route at the specified index (or nullptr if out-of-bounds).
+
+* RouteByName(name):
+- Returns a pointer to the route with the specified name (or nullptr if not found).
+
+
 CStreetMap (located in StreetMap.h) has a couple of functions that are implemented to function in conjunction with COpenStreetMap
 
 Struct SNode contains the following public variables: (These variabes will be declared to a)
@@ -117,3 +284,8 @@ Ideally after you get the ID of a node, you can use NodeByINdex() or NodeByID() 
     
     To get the attribute of a certain way using it's key do:
         ReadTownOSM->WayByID(1344).GetAttribute("lanes")   -> This will return "2"
+
+
+
+
+
